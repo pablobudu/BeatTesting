@@ -22,9 +22,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (playerControls.Player.ActionButton.triggered)
-        {
-            Debug.Log("Presionado");
-        }
+        
+    }
+
+    public bool IsActionPressed()
+    {
+        return playerControls.Player.ActionButton.triggered;
     }
 }

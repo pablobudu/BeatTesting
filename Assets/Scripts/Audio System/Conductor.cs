@@ -62,7 +62,7 @@ public class Conductor : MonoBehaviour
         if (IsBeat())
         {
             OnBeat?.Invoke();
-            Debug.Log("Punchi");
+            
         }
     }
 
