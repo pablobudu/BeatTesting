@@ -24,14 +24,14 @@ public class Conductor : MonoBehaviour
     /// <summary>
     /// Esta variable nos permite darle más o menos tolerancia a lo que consideramos OnBeat
     /// </summary>
-    public float beatOffset = 0.01f;
+    [SerializeField] private float beatOffset = 0.08f;
 
     //an AudioSource attached to this GameObject that will play the music.
     public AudioSource musicSource;
 
 
     //Evento que permite que el control funcione ¿?
-    public static event Action OnBeat;
+    public static event Action<bool> OnBeat;
 
     
 
@@ -61,14 +61,30 @@ public class Conductor : MonoBehaviour
         // Check if it's a beat and notify subscribers
         if (IsBeat())
         {
-            OnBeat?.Invoke();
-            
+            OnBeat?.Invoke(true);
+        }
+        else
+        {
+            OnBeat?.Invoke(false);
         }
     }
 
     // Check if the current position is a beat
     private bool IsBeat()
     {
-        return Mathf.Abs(songPositionInBeats - Mathf.Round(songPositionInBeats)) < beatOffset;
+        // Calculate the fractional part of the current beat
+        float beatFraction = songPositionInBeats - Mathf.Floor(songPositionInBeats);
+
+        // Check if the fractional part is within a very small range
+        // This indicates that we are very close to the beat
+        if (beatFraction < beatOffset) // Adjust this threshold as needed
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
+
 }

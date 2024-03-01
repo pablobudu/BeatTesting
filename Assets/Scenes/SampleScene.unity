@@ -640,6 +640,7 @@ MonoBehaviour:
   songPosition: 0
   songPositionInBeats: 0
   dspSongTime: 0
+  beatOffset: 0.01
   musicSource: {fileID: 768970314}
 --- !u!4 &768970316
 Transform:
@@ -754,6 +755,7 @@ GameObject:
   - component: {fileID: 1087451022}
   - component: {fileID: 1087451027}
   - component: {fileID: 1087451026}
+  - component: {fileID: 1087451028}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -868,3 +870,16 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1087451028
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1087451021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7acb8ffdfc4d0df49beac35d20a7f16f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerController: {fileID: 0}
