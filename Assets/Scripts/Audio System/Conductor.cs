@@ -24,13 +24,14 @@ public class Conductor : MonoBehaviour
     /// <summary>
     /// Esta variable nos permite darle más o menos tolerancia a lo que consideramos OnBeat
     /// </summary>
-    [SerializeField] private float beatOffset = 0.08f;
+    [SerializeField] private float beatOffset = 0.3f;
+
 
     //an AudioSource attached to this GameObject that will play the music.
     public AudioSource musicSource;
 
 
-    //Evento que permite que el control funcione ¿?
+    //Evento que permite que el control funcione
     public static event Action<bool> OnBeat;
 
     

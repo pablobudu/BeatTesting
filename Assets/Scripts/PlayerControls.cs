@@ -33,7 +33,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""id"": ""8de446df-6d83-4008-a273-b0ad3e99683c"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """",
+                    ""interactions"": ""Press(behavior=2)"",
                     ""initialStateCheck"": true
                 },
                 {
@@ -41,6 +41,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""type"": ""Value"",
                     ""id"": ""ed07888a-5835-49fb-9936-9be40aa0ae66"",
                     ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""TriggerPressAndRelease"",
+                    ""type"": ""Button"",
+                    ""id"": ""f4215de7-99fb-4a40-a96e-cf9565049b1c"",
+                    ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
@@ -134,6 +143,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Movement"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d066598d-cf8a-442f-9dc3-78a64cf55bd8"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""TriggerPressAndRelease"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -144,6 +164,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_ActionButton = m_Player.FindAction("ActionButton", throwIfNotFound: true);
         m_Player_Movement = m_Player.FindAction("Movement", throwIfNotFound: true);
+        m_Player_TriggerPressAndRelease = m_Player.FindAction("TriggerPressAndRelease", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -207,12 +228,14 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_ActionButton;
     private readonly InputAction m_Player_Movement;
+    private readonly InputAction m_Player_TriggerPressAndRelease;
     public struct PlayerActions
     {
         private @PlayerControls m_Wrapper;
         public PlayerActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @ActionButton => m_Wrapper.m_Player_ActionButton;
         public InputAction @Movement => m_Wrapper.m_Player_Movement;
+        public InputAction @TriggerPressAndRelease => m_Wrapper.m_Player_TriggerPressAndRelease;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -228,6 +251,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Movement.started += instance.OnMovement;
             @Movement.performed += instance.OnMovement;
             @Movement.canceled += instance.OnMovement;
+            @TriggerPressAndRelease.started += instance.OnTriggerPressAndRelease;
+            @TriggerPressAndRelease.performed += instance.OnTriggerPressAndRelease;
+            @TriggerPressAndRelease.canceled += instance.OnTriggerPressAndRelease;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -238,6 +264,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Movement.started -= instance.OnMovement;
             @Movement.performed -= instance.OnMovement;
             @Movement.canceled -= instance.OnMovement;
+            @TriggerPressAndRelease.started -= instance.OnTriggerPressAndRelease;
+            @TriggerPressAndRelease.performed -= instance.OnTriggerPressAndRelease;
+            @TriggerPressAndRelease.canceled -= instance.OnTriggerPressAndRelease;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -259,5 +288,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     {
         void OnActionButton(InputAction.CallbackContext context);
         void OnMovement(InputAction.CallbackContext context);
+        void OnTriggerPressAndRelease(InputAction.CallbackContext context);
     }
 }

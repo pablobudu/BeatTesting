@@ -11,7 +11,7 @@
                     "id": "8de446df-6d83-4008-a273-b0ad3e99683c",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Press(behavior=2)",
                     "initialStateCheck": true
                 },
                 {
@@ -19,6 +19,15 @@
                     "type": "Value",
                     "id": "ed07888a-5835-49fb-9936-9be40aa0ae66",
                     "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "TriggerPressAndRelease",
+                    "type": "Button",
+                    "id": "f4215de7-99fb-4a40-a96e-cf9565049b1c",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -112,6 +121,17 @@
                     "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "d066598d-cf8a-442f-9dc3-78a64cf55bd8",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "TriggerPressAndRelease",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }
