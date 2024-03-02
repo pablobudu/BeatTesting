@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -9,7 +10,12 @@ public class MainGameManager : MonoBehaviour
     private float holdTime = 0f;
     private bool isTriggerHolding = false;
     private bool onBeat = false;
-    
+
+    //Estos eventos solo se triggerean cuando el jugador presiona y suelta en beat, respectivamente. 
+    public static event Action<float> TriggerOnBeatStart;
+    public static event Action<float> TriggerOnBeatEnd;
+
+
     void Start()
     {
         
@@ -39,6 +45,7 @@ public class MainGameManager : MonoBehaviour
         {
             Debug.Log("Trigger presionado a tiempo");
             isTriggerHolding = true;
+            TriggerOnBeatStart?.Invoke(startTime);
         }
 
     }
@@ -46,9 +53,14 @@ public class MainGameManager : MonoBehaviour
     {
         if(onBeat && isTriggerHolding)
         {
-            Debug.Log("Trigger soltado después de: " + holdTime + " segundos");
+            Debug.Log("Trigger soltado a tiempo. Holdtime: " + holdTime + " segundos");
             this.holdTime = holdTime;
             isTriggerHolding = false;
+            TriggerOnBeatEnd?.Invoke(holdTime);
+        }
+        else
+        {
+            TriggerOnBeatEnd?.Invoke(-1);
         }
         
 

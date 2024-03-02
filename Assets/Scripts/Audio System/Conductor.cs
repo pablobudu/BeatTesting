@@ -28,7 +28,7 @@ public class Conductor : MonoBehaviour
 
 
     //an AudioSource attached to this GameObject that will play the music.
-    public AudioSource musicSource;
+    private AudioSource musicSource;
 
 
     //Evento que permite que el control funcione
