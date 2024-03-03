@@ -24,7 +24,7 @@ public class Conductor : MonoBehaviour
     /// <summary>
     /// Esta variable nos permite darle más o menos tolerancia a lo que consideramos OnBeat
     /// </summary>
-    [SerializeField] private float beatOffset = 0.3f;
+    [SerializeField] private float beatOffset = 0.2f;
 
 
     //an AudioSource attached to this GameObject that will play the music.
@@ -68,7 +68,6 @@ public class Conductor : MonoBehaviour
             {
                 OnBeat?.Invoke(true);
                 beatActionExecuted = true;
-                Debug.Log("Es un beat");
             }
         }
         else
@@ -93,7 +92,7 @@ public class Conductor : MonoBehaviour
         // Check if the difference is within the beatOffset
         if (Mathf.Abs(timeSinceLastBeat) < beatOffset)
         {
-            // Update the last beat position to the current position
+            
             return true;
         }
         else
