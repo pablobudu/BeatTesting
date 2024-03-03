@@ -6,6 +6,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    public float movementSpeed = 10f;
+    private Rigidbody rb;
     private PlayerControls playerControls;
     private float holdStartTime = 0f;
     private bool isHolding = false;
@@ -28,6 +30,10 @@ public class PlayerController : MonoBehaviour
     {
         playerControls.Disable();
     }
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+    }
 
     // Update is called once per frame
     void Update()
@@ -37,6 +43,7 @@ public class PlayerController : MonoBehaviour
         {
             UpdateHoldTime();
         }
+        PlayerMovement();
         
     }
 
@@ -84,4 +91,18 @@ public class PlayerController : MonoBehaviour
         
     }
     #endregion
+
+
+    #region Movement
+    public void PlayerMovement()
+    {
+        Vector2 playerInput = playerControls.Player.Movement.ReadValue<Vector2>();
+        
+
+        rb.velocity = (new Vector3(playerInput.x, 0, playerInput.y) * movementSpeed * Time.deltaTime);
+        
+
+    }
+    #endregion
+
 }

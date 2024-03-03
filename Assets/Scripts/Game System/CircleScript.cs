@@ -10,15 +10,18 @@ public class CircleScript : MonoBehaviour
 {
 
     public float sizeToChange = 2f;
-    private bool isGrowing = false;
+    private bool isShrinking = false;
+    public float minSize = 1f;
     private float holdTime;
     private Vector3 originalSize;
+    private int beatCounter = 0;
     [SerializeField] private GameObject indicadorExito;
 
     private void OnEnable()
     {
-        MainGameManager.TriggerOnBeatStart += StartGrowing;
-        MainGameManager.TriggerOnBeatEnd += StopGrowing;
+        MainGameManager.TriggerOnBeatStart += StartShrinking;
+        MainGameManager.TriggerOnBeatEnd += StopShrinking;
+        Conductor.OnBeat += BeatCounting;
 
     }
 
@@ -26,37 +29,50 @@ public class CircleScript : MonoBehaviour
     {
         originalSize = gameObject.transform.localScale;
         Vector3 changeInSize = new Vector3(0, 0, 0);
-
-
     }
-    
+
     void Update()
     {
         WasOnBeat();
-        
+
     }
 
-    private void StartGrowing(float startTime)
+    private void StartShrinking(float startTime)
     {
-        isGrowing= true;
+        isShrinking = true;
     }
 
-    private void StopGrowing(float holdTime)
+    private void StopShrinking(float holdTime)
     {
         this.holdTime = holdTime;
-        isGrowing = false;
+        isShrinking = false;
     }
 
     private void WasOnBeat()
     {
-        if (isGrowing)
+        Vector3 currentSize = gameObject.transform.localScale;
+        if (isShrinking && transform.localScale.magnitude >= minSize)
         {
-            Vector3 changeInSize = new Vector3(sizeToChange, sizeToChange, 0);
-            gameObject.transform.localScale += changeInSize * Time.deltaTime;
+            ChangeSize();
         }
-        else
+        else 
         {
             gameObject.transform.localScale = originalSize;
+        }
+    }
+
+    private void ChangeSize()
+    {
+
+        Vector3 changeInSize = new Vector3(sizeToChange, sizeToChange, 0);
+        gameObject.transform.localScale -= changeInSize * Time.deltaTime;
+    }
+    //Cuando alcance el mínimo tamaño, esperar 2 beats antes de volver a resetear el tamaño y mostrar el indicador de éxito. 
+    private void BeatCounting(bool isOnBeat)
+    {
+        if(isOnBeat)
+        {
+            
         }
     }
 

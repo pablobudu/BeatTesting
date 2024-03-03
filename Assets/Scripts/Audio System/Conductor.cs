@@ -30,6 +30,8 @@ public class Conductor : MonoBehaviour
     //an AudioSource attached to this GameObject that will play the music.
     private AudioSource musicSource;
 
+    private bool beatActionExecuted = false;
+
 
     //Evento que permite que el control funcione
     public static event Action<bool> OnBeat;
@@ -62,10 +64,16 @@ public class Conductor : MonoBehaviour
         // Check if it's a beat and notify subscribers
         if (IsBeat())
         {
-            OnBeat?.Invoke(true);
+            if (!beatActionExecuted)
+            {
+                OnBeat?.Invoke(true);
+                beatActionExecuted = true;
+                Debug.Log("Es un beat");
+            }
         }
         else
         {
+            beatActionExecuted = false;
             OnBeat?.Invoke(false);
         }
     }
@@ -73,13 +81,19 @@ public class Conductor : MonoBehaviour
     // Check if the current position is a beat
     private bool IsBeat()
     {
-        // Calculate the fractional part of the current beat
-        float beatFraction = songPositionInBeats - Mathf.Floor(songPositionInBeats);
+        // Calculate the beat index based on the current song position
+        int currentBeatIndex = Mathf.FloorToInt(songPositionInBeats);
 
-        // Check if the fractional part is within a very small range
-        // This indicates that we are very close to the beat
-        if (beatFraction < beatOffset) // Adjust this threshold as needed
+        // Calculate the absolute position of the current beat
+        float currentBeatPosition = currentBeatIndex * secPerBeat;
+
+        // Calculate the difference between the current position and the position of the last beat
+        float timeSinceLastBeat = songPosition - currentBeatPosition;
+
+        // Check if the difference is within the beatOffset
+        if (Mathf.Abs(timeSinceLastBeat) < beatOffset)
         {
+            // Update the last beat position to the current position
             return true;
         }
         else
@@ -87,5 +101,6 @@ public class Conductor : MonoBehaviour
             return false;
         }
     }
+
 
 }
