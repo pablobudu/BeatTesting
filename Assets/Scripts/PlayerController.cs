@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    public float movementSpeed = 50f;
+    public float movementSpeed = 750f;
     private Rigidbody rb;
     private PlayerControls playerControls;
     private float holdStartTime = 0f;
@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        IsActionPressed();
+        
         if(isHolding)
         {
             UpdateHoldTime();
@@ -48,16 +48,7 @@ public class PlayerController : MonoBehaviour
     }
 
 
-    public bool IsActionPressed()
-    {
-        if (playerControls.Player.ActionButton.triggered)
-        {
-            Debug.Log("Presionado");
-            return true;
-        }
-        return false;
-
-    }
+    
 
     #region Hold System
     public void OnTriggerHold(InputAction.CallbackContext context)

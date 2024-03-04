@@ -33,7 +33,7 @@ public class Conductor : MonoBehaviour
     private bool beatActionExecuted = false;
 
 
-    //Evento que permite que el control funcione
+    //Evento que permite que se triggerea cada vez que hay un beat. 
     public static event Action<bool> OnBeat;
 
     

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Animations;
@@ -20,10 +21,16 @@ public class CircleScript : MonoBehaviour
     [SerializeField]private int beatCounter = 0;
     private bool isCountingBeats = false;
     private float timePerBeat;
-    private bool isPenalizing = false;
     private Renderer renderer;
     public Color minSizeColor = Color.green;
     [SerializeField] private GameObject indicadorExito;
+    private bool isInsideCollider;
+
+    //Evento se triggerea cuando elemento Pelota está en el collider.
+    public static event Action<bool> IsTriggeringCollider;
+
+    //Este evento se ejecuta cuando el jugador fue penalizado. Lo utilizaré en MainGameManager para tenerlo en cuenta.
+    public static event Action WasPenalized;
 
     private void OnEnable()
     {
@@ -51,17 +58,23 @@ public class CircleScript : MonoBehaviour
             ResetSize();
             isCountingBeats = false;
         }
-
-
-        
         OnBeatLimitReached();
 
-       
+        //Si el booleano está true, entonces invocarlo.
+        if (isInsideCollider)
+        {
+            IsTriggeringCollider?.Invoke(true);
+        }
+        else
+        {
+            IsTriggeringCollider?.Invoke(false);
+        }
     }
 
     private void StartShrinking(float startTime)
     {
-        timePerBeat = FindObjectOfType<Conductor>().GetSecPerBeat();
+        //Sería bueno tener el tiempo exacto del beat, y restarlo al tiempo en que  se apreto. Ese valor restarlo en esta operación para que el shrink fuera lo más exacto posible. 
+        timePerBeat = FindObjectOfType<Conductor>().GetSecPerBeat() ; 
         isShrinking = true;
     }
 
@@ -69,7 +82,6 @@ public class CircleScript : MonoBehaviour
     {
         this.holdTime = holdTime;
         isShrinking = false;
-        //isCountingBeats = false;
     }
 
     private void Shrink()
@@ -88,7 +100,7 @@ public class CircleScript : MonoBehaviour
     private void ReduceSize()
     {
         float timeToShrink = timePerBeat * 3; // Tiempo necesario para encoger después de 3 beats
-        float sizeReductionPerSecond = (originalSize.magnitude - minSize) / timeToShrink; //1) Obtenemos cuando hayu que reducir, y eso lo dividimos x el tiempo.
+        float sizeReductionPerSecond = (originalSize.magnitude - minSize) / timeToShrink; //1) Obtenemos cuanto hay que reducir, y eso lo dividimos x el tiempo.
 
         Vector3 changeInSize = new Vector3(sizeReductionPerSecond, sizeReductionPerSecond, 0);
         gameObject.transform.localScale -= changeInSize * Time.deltaTime;
@@ -108,7 +120,6 @@ public class CircleScript : MonoBehaviour
         if(isOnBeat && isCountingBeats)
         {
             beatCounter++;
-            Debug.Log(beatCounter);
         }else if(!isCountingBeats)
         {
             beatCounter = 0;
@@ -123,7 +134,7 @@ public class CircleScript : MonoBehaviour
     {
         if (beatCounter == 2)
         {
-            Debug.Log("No lo soltaste a tiempo");
+            WasPenalized?.Invoke();
             Renderer renderer = gameObject.GetComponent<Renderer>(); // Obtén el componente Renderer del gameobject
             renderer.enabled = false; // Oculta el gameobject
             gameObject.GetComponent<Collider>().enabled = false; // Desactiva el collider
@@ -132,9 +143,8 @@ public class CircleScript : MonoBehaviour
             indicadorExito.SetActive(true); // Muestra el indicador de penalización
             isCountingBeats= true;
         }
-        else if (beatCounter >= 3)
+        else if (beatCounter >=3)
         {
-            isPenalizing = false;
             Renderer renderer = gameObject.GetComponent<Renderer>(); // Obtén el componente Renderer del gameobject
             renderer.enabled = true; // Muestra el gameobject
             gameObject.GetComponent<Collider>().enabled = true; // Activa el collider
@@ -145,5 +155,22 @@ public class CircleScript : MonoBehaviour
     private void ChangeColor(Color color)
     {
         renderer.material.color = color; // Cambiar el color del material
+    }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("Pelota"))
+        {
+            isInsideCollider = true;
+        }
+        
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Pelota"))
+        {
+            isInsideCollider = false;
+        }
     }
 }

@@ -1,69 +1,108 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class MainGameManager : MonoBehaviour
 {
+    // Velocidad de la pelota
     public float ballSpeed = 10f;
+
+    // Tiempo de retención actual y mejor tiempo de retención
     private float holdTime = 0f;
+    private float bestHoldTime = 0f;
+
+    // Estado de retención del disparador y estado del ritmo
     private bool isTriggerHolding = false;
     private bool onBeat = false;
 
-    //Estos eventos solo se triggerean cuando el jugador presiona y suelta en beat, respectivamente. 
+    // Indicador si el jugador está interactuando con el collider
+    private bool isTriggeringColliderBool = false;
+
+    // Referencia al objeto del jugador
+    [SerializeField] private GameObject circlePlayer;
+
+    // Eventos que se activan cuando el jugador presiona y suelta en el ritmo
     public static event Action<float> TriggerOnBeatStart;
     public static event Action<float> TriggerOnBeatEnd;
 
+    // Evento que se activa cuando se lanza la pelota
+    public static event Action<float> LanzarPelota;
 
-    void Start()
-    {
-        
-    }
+    // Suscripción a eventos
     private void OnEnable()
     {
-        //Me suscribo al evento OnBeat del Conductor
         Conductor.OnBeat += SetOnBeat;
-        //Me suscribo a los eventos de los trigger
         PlayerController.OnTriggerHoldStart += OnTriggerHoldStart;
         PlayerController.OnTriggerHoldEnd += OnTriggerHoldEnd;
+        CircleScript.IsTriggeringCollider += IsTriggeringCollider;
+        CircleScript.WasPenalized += PlayerWasPenalized;
     }
 
-    /// <summary>
-    /// Cambia el valor del booleano OnBeat de esta clase en razón del conductor. 
-    /// </summary>
-    /// <param name="isOnBeat"></param>
+    // Cambia el estado del ritmo
     private void SetOnBeat(bool isOnBeat)
     {
-        onBeat= isOnBeat;
+        onBeat = isOnBeat;
     }
 
-
+    // Detecta cuando el jugador presiona el gatillo
     private void OnTriggerHoldStart(float startTime)
     {
         if (onBeat)
         {
-            Debug.Log("Trigger presionado a tiempo");
             isTriggerHolding = true;
             TriggerOnBeatStart?.Invoke(startTime);
         }
-
     }
-    private void OnTriggerHoldEnd(float holdTime)
+
+    // Actualiza el tiempo de retención y maneja la liberación del gatillo
+    private void OnTriggerHoldEnd(float holdTimeFromController)
     {
-        if(onBeat && isTriggerHolding)
+        if (onBeat && isTriggerHolding)
         {
-            Debug.Log("Trigger soltado a tiempo. Holdtime: " + holdTime + " segundos");
-            this.holdTime = holdTime;
+            holdTime = holdTimeFromController;
+            DevolverPelotaYUpdateHoldTime(holdTime);
             isTriggerHolding = false;
-            TriggerOnBeatEnd?.Invoke(holdTime);
+            TriggerOnBeatEnd?.Invoke(holdTimeFromController);
+            holdTime = 0;
         }
         else
         {
             TriggerOnBeatEnd?.Invoke(-1);
         }
-        
-
     }
 
+    // Actualiza el mejor tiempo de retención
+    private void UpdateBestHoldTime(float currentHoldTime)
+    {
+        if (currentHoldTime > bestHoldTime)
+        {
+            bestHoldTime = currentHoldTime;
+        }
+    }
+
+    // Determina si el collider está siendo activado
+    private void IsTriggeringCollider(bool isTriggering)
+    {
+        isTriggeringColliderBool = isTriggering;
+    }
+
+    // Devuelve la pelota si el jugador está interactuando con el collider
+    private void DevolverPelotaYUpdateHoldTime(float holdTime)
+    {
+        if (isTriggeringColliderBool)
+        {
+            
+            LanzarPelota?.Invoke(holdTime); //Lanza la pelota. El comportamiento de esto estará dentro de la pelota.
+            UpdateBestHoldTime(holdTime); //
+            Debug.Log("HoldTime actualizado: " + holdTime);
+            Debug.Log("Best holdTime" + bestHoldTime);
+        }
+    }
+
+    // Maneja la penalización del jugador
+    private void PlayerWasPenalized()
+    {
+        Debug.Log("¡Jugador penalizado!");
+        holdTime = 0f;
+        isTriggerHolding = false;
+    }
 }
