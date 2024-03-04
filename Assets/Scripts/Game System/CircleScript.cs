@@ -9,14 +9,18 @@ using UnityEngine;
 public class CircleScript : MonoBehaviour
 {
 
+    //En algun momento refactorizar esta clase para que el conteo se haga de forma automática del 0 al 3. De forma que todo se base en los beats.
+    //Entonces, el shrink dura 3 beats desde q se presiona, y tiense un beat extra para cargar. Si no alcanzas a soltarlo en el beat 4 te penaliza
+
     public float sizeToChange = 2f;
     private bool isShrinking = false;
     public float minSize = 1.5f;
     private float holdTime;
     private Vector3 originalSize;
-    private int beatCounter = 0;
+    [SerializeField]private int beatCounter = 0;
     private bool isCountingBeats = false;
     private float timePerBeat;
+    private bool isPenalizing = false;
     [SerializeField] private GameObject indicadorExito;
 
     private void OnEnable()
@@ -42,6 +46,7 @@ public class CircleScript : MonoBehaviour
         else
         {
             ResetSize();
+            isCountingBeats = false;
         }
 
 
@@ -61,19 +66,20 @@ public class CircleScript : MonoBehaviour
     {
         this.holdTime = holdTime;
         isShrinking = false;
+        //isCountingBeats = false;
     }
 
     private void Shrink()
     {
-        if (transform.localScale.magnitude >= minSize)
+        if (transform.localScale.magnitude > minSize)
         {
-          ReduceSize();
+            ReduceSize();
         }
         else
         {
+            Debug.Log("Punto mas pekeño");
             isCountingBeats = true;
         }
-
     }
 
     private void ReduceSize()
@@ -111,7 +117,7 @@ public class CircleScript : MonoBehaviour
     /// </summary>
     private void OnBeatLimitReached()
     {
-        if (beatCounter == 2)
+        if (beatCounter == 1)
         {
             Debug.Log("No lo soltaste a tiempo");
             Renderer renderer = gameObject.GetComponent<Renderer>(); // Obtén el componente Renderer del gameobject
@@ -120,14 +126,15 @@ public class CircleScript : MonoBehaviour
             ResetSize(); // Restablece el tamaño del gameobject
             isShrinking = false; // Detiene el encogimiento
             indicadorExito.SetActive(true); // Muestra el indicador de penalización
+            isCountingBeats= true;
         }
-        else if (beatCounter >= 3)
+        else if (beatCounter >= 2)
         {
+            isPenalizing = false;
             Renderer renderer = gameObject.GetComponent<Renderer>(); // Obtén el componente Renderer del gameobject
             renderer.enabled = true; // Muestra el gameobject
             gameObject.GetComponent<Collider>().enabled = true; // Activa el collider
             indicadorExito.SetActive(false); // Oculta el indicador de penalización
-            isCountingBeats = false;
         }
     }
 }

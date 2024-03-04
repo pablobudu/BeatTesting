@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    public float movementSpeed = 10f;
+    public float movementSpeed = 50f;
     private Rigidbody rb;
     private PlayerControls playerControls;
     private float holdStartTime = 0f;
@@ -98,7 +98,6 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 playerInput = playerControls.Player.Movement.ReadValue<Vector2>();
         
-
         rb.velocity = (new Vector3(playerInput.x, 0, playerInput.y) * movementSpeed * Time.deltaTime);
         
 
