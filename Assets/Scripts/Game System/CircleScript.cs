@@ -21,6 +21,8 @@ public class CircleScript : MonoBehaviour
     private bool isCountingBeats = false;
     private float timePerBeat;
     private bool isPenalizing = false;
+    private Renderer renderer;
+    public Color minSizeColor = Color.green;
     [SerializeField] private GameObject indicadorExito;
 
     private void OnEnable()
@@ -35,6 +37,7 @@ public class CircleScript : MonoBehaviour
     {
         originalSize = gameObject.transform.localScale;
         Vector3 changeInSize = new Vector3(0, 0, 0);
+        renderer = GetComponent<Renderer>();
     }
 
     void Update()
@@ -77,7 +80,7 @@ public class CircleScript : MonoBehaviour
         }
         else
         {
-            Debug.Log("Punto mas pekeño");
+            ChangeColor(minSizeColor);
             isCountingBeats = true;
         }
     }
@@ -95,6 +98,7 @@ public class CircleScript : MonoBehaviour
     private void ResetSize()
     {
         gameObject.transform.localScale = originalSize;
+        ChangeColor(Color.blue);
     }
 
 
@@ -117,7 +121,7 @@ public class CircleScript : MonoBehaviour
     /// </summary>
     private void OnBeatLimitReached()
     {
-        if (beatCounter == 1)
+        if (beatCounter == 2)
         {
             Debug.Log("No lo soltaste a tiempo");
             Renderer renderer = gameObject.GetComponent<Renderer>(); // Obtén el componente Renderer del gameobject
@@ -128,7 +132,7 @@ public class CircleScript : MonoBehaviour
             indicadorExito.SetActive(true); // Muestra el indicador de penalización
             isCountingBeats= true;
         }
-        else if (beatCounter >= 2)
+        else if (beatCounter >= 3)
         {
             isPenalizing = false;
             Renderer renderer = gameObject.GetComponent<Renderer>(); // Obtén el componente Renderer del gameobject
@@ -136,5 +140,10 @@ public class CircleScript : MonoBehaviour
             gameObject.GetComponent<Collider>().enabled = true; // Activa el collider
             indicadorExito.SetActive(false); // Oculta el indicador de penalización
         }
+    }
+
+    private void ChangeColor(Color color)
+    {
+        renderer.material.color = color; // Cambiar el color del material
     }
 }
