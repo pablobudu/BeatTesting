@@ -90,7 +90,7 @@ public class PlayerController : MonoBehaviour
         Vector2 playerInput = playerControls.Player.Movement.ReadValue<Vector2>();
         
         rb.velocity = (new Vector3(playerInput.x, 0, playerInput.y) * movementSpeed * Time.deltaTime);
-        
+        Debug.Log(playerInput);
 
     }
     #endregion
