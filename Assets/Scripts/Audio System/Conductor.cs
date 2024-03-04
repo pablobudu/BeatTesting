@@ -10,7 +10,7 @@ public class Conductor : MonoBehaviour
     public float songBpm;
 
     //The number of seconds for each song beat
-    public float secPerBeat;
+    private float secPerBeat;
 
     //Current song position, in seconds
     public float songPosition;
@@ -101,5 +101,8 @@ public class Conductor : MonoBehaviour
         }
     }
 
-
+    public float GetSecPerBeat()
+    {
+        return secPerBeat;
+    }
 }

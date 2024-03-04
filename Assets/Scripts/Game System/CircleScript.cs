@@ -16,6 +16,7 @@ public class CircleScript : MonoBehaviour
     private Vector3 originalSize;
     private int beatCounter = 0;
     private bool isCountingBeats = false;
+    private float timePerBeat;
     [SerializeField] private GameObject indicadorExito;
 
     private void OnEnable()
@@ -52,6 +53,7 @@ public class CircleScript : MonoBehaviour
 
     private void StartShrinking(float startTime)
     {
+        timePerBeat = FindObjectOfType<Conductor>().GetSecPerBeat();
         isShrinking = true;
     }
 
@@ -76,9 +78,14 @@ public class CircleScript : MonoBehaviour
 
     private void ReduceSize()
     {
-        Vector3 changeInSize = new Vector3(sizeToChange, sizeToChange, 0);
+        float timeToShrink = timePerBeat * 3; // Tiempo necesario para encoger después de 3 beats
+        float sizeReductionPerSecond = (originalSize.magnitude - minSize) / timeToShrink; //1) Obtenemos cuando hayu que reducir, y eso lo dividimos x el tiempo.
+
+        Vector3 changeInSize = new Vector3(sizeReductionPerSecond, sizeReductionPerSecond, 0);
         gameObject.transform.localScale -= changeInSize * Time.deltaTime;
     }
+
+
     private void ResetSize()
     {
         gameObject.transform.localScale = originalSize;
